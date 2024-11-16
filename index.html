@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>పాము పండు లోడ్ క్యాలిక్యులేటర్</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+    .container { margin-bottom: 20px; }
+    label { display: block; margin: 8px 0 4px; }
+    button { margin-top: 10px; padding: 8px 12px; }
+    #load-list { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>పాము పండు లోడ్ క్యాలిక్యులేటర్</h2>
+  <div class="container">
+    <label for="loadId">లోడ్ ID:</label>
+    <input type="text" id="loadId" placeholder="లోడ్ ID ఎంటర్ చేయండి" required>
+
+    <label for="date">తేదీ:</label>
+    <input type="date" id="date" required>
+
+    <label for="time">సమయం:</label>
+    <input type="time" id="time" required>
+
+    <label for="tons">టన్నులు:</label>
+    <input type="number" id="tons" placeholder="టన్నులు ఎంటర్ చేయండి" step="0.001" required>
+
+    <label for="kintas">కింటాలు:</label>
+    <input type="number" id="kintas" placeholder="కింటాలు ఎంటర్ చేయండి" step="0.001" required>
+
+    <label for="kg">కిలోగ్రాములు:</label>
+    <input type="number" id="kg" placeholder="కిలోగ్రాములు ఎంటర్ చేయండి" step="1" required>
+
+    <button onclick="addLoad()">లోడ్ జోడించండి</button>
+    <button onclick="calculateDailyTotal()">రోజు మొత్తం లెక్కించండి</button>
+  </div>
+
+  <div>
+    <h3>లోడ్ లిస్ట్</h3>
+    <ul id="load-list"></ul>
+    <h3>రోజు మొత్తం బరువు:</h3>
+    <p id="daily-total-weight">0 కిలోలు (0 టన్నులు)</p>
+    <button onclick="resetCalculator()">కొత్త రోజుకి రీసెట్ చేయండి</button>
+  </div>
+
+  <script>
+    let loads = [];
+
+    function addLoad() {
+      // Get input values
+      const loadId = document.getElementById("loadId").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      const tons = parseFloat(document.getElementById("tons").value) || 0;
+      const kintas = parseFloat(document.getElementById("kintas").value) || 0;
+      const kg = parseFloat(document.getElementById("kg").value) || 0;
+
+      // Convert tons and kintas to kilograms
+      const loadWeight = (tons * 1000) + (kintas * 100) + kg;
+
+      // Add load details to the loads array
+      const load = {
+        loadId,
+        date,
+        time,
+        tons,
+        kintas,
+        kg,
+        loadWeight
+      };
+      loads.push(load);
+
+      // Display the load entry
+      const loadList = document.getElementById("load-list");
+      const listItem = document.createElement("li");
+      listItem.textContent = `లోడ్ ID: ${loadId}, తేదీ: ${date}, సమయం: ${time}, టన్నులు: ${tons}, కింటాలు: ${kintas}, కిలోలు: ${kg} (మొత్తం: ${loadWeight} కిలోలు)`;
+      loadList.appendChild(listItem);
+
+      // Clear input fields
+      document.getElementById("loadId").value = "";
+      document.getElementById("date").value = "";
+      document.getElementById("time").value = "";
+      document.getElementById("tons").value = "";
+      document.getElementById("kintas").value = "";
+      document.getElementById("kg").value = "";
+    }
+
+    function calculateDailyTotal() {
+      // Calculate total weight of all loads for the day
+      let totalWeight = loads.reduce((sum, load) => sum + load.loadWeight, 0);
+
+      // Update the daily total display
+      document.getElementById("daily-total-weight").textContent = `${totalWeight} కిలోలు (${(totalWeight / 1000).toFixed(2)} టన్నులు)`;
+    }
+
+    function resetCalculator() {
+      // Reset the loads array and total weight display
+      loads = [];
+      document.getElementById("daily-total-weight").textContent = "0 కిలోలు (0 టన్నులు)";
+      document.getElementById("load-list").innerHTML = "";
+    }
+  </script>
+
+</body>
+</html>
